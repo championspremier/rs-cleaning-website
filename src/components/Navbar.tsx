@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -17,7 +18,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-charcoal/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
-        <a href="/" className="shrink-0">
+        <Link href="/" scroll={true} className="shrink-0">
           <Image
             src="/full-light-logo.png"
             alt="RS Cleaning"
@@ -25,18 +26,19 @@ export default function Navbar() {
             height={40}
             className="h-10 w-auto"
           />
-        </a>
+        </Link>
 
         {/* Desktop nav links */}
         <ul className="hidden items-center gap-8 md:flex">
           {navLinks.map((l) => (
             <li key={l.label}>
-              <a
+              <Link
                 href={l.href}
+                scroll={l.href === "/"}
                 className="relative text-sm font-medium text-white transition-colors hover:text-cyan-accent after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-cyan-accent after:transition-all after:duration-300 hover:after:w-full"
               >
                 {l.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -129,13 +131,14 @@ export default function Navbar() {
           <ul className="flex flex-col gap-1 px-6 py-4">
             {navLinks.map((l) => (
               <li key={l.label}>
-                <a
+                <Link
                   href={l.href}
+                  scroll={l.href === "/"}
                   onClick={() => setOpen(false)}
                   className="block rounded-lg px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/5 hover:text-cyan-accent"
                 >
                   {l.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

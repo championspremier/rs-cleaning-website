@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import ScrollCleanVideo from "@/components/ScrollCleanVideo";
 import TestimonialsBlock from "@/components/TestimonialsBlock";
 import LogoCloudBlock from "@/components/LogoCloudBlock";
 import QuoteForm from "@/components/QuoteForm";
@@ -11,10 +12,13 @@ export default function Home() {
       {/* ── Navbar ───────────────────────────────────────────────── */}
       <Navbar />
 
-      {/* ── 1. Hero + Services (light) ──────────────────────────── */}
+      {/* ── 1. Scroll-driven frame animation (dark) — FIRST ─────── */}
+      <ScrollCleanVideo />
+
+      {/* ── 2. Hero + Services (light) ──────────────────────────── */}
       <HeroSection />
 
-      {/* ── 2. Social Proof (dark) — Testimonials + Trusted By ──── */}
+      {/* ── 3. Social Proof (dark) — Testimonials + Trusted By ──── */}
       <section className="bg-charcoal py-20 sm:py-28">
         {/* Testimonials */}
         <TestimonialsBlock />
@@ -25,7 +29,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 3. Quote Form (light) ────────────────────────────────── */}
+      {/* ── 5. Quote Form (light) ───────────────────────────────── */}
       <section className="bg-teal-tint px-6 py-24 sm:py-32">
         <div className="mx-auto max-w-4xl">
           <div className="mb-14 flex flex-col items-center">
@@ -38,7 +42,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 4. Footer (dark) — last on page ──────────────────────── */}
+      {/* ── 6. Footer (dark) — last on page ─────────────────────── */}
       <FooterBlock />
     </>
   );

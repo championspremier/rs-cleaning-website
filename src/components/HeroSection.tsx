@@ -96,7 +96,7 @@ export default function HeroSection() {
   const [displayedValues, setDisplayedValues] = useState<number[]>([0, 0, 0]);
   const [hasAnimated, setHasAnimated] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(statsRef, { once: true, amount: 0.3 });
+  const isInView = useInView(statsRef, { once: true, amount: 0.5 });
 
   useEffect(() => {
     setIsLoaded(true);
@@ -129,10 +129,10 @@ export default function HeroSection() {
   }, [isInView, hasAnimated]);
 
   return (
-      <section className="relative overflow-hidden bg-teal-tint">
+      <section className="relative -mt-16 overflow-hidden bg-teal-tint">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(20,184,166,0.07)_0%,_transparent_70%)]" />
 
-        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pb-24 pt-24 sm:pb-32 sm:pt-32">
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pb-24 pt-0 sm:pb-32 sm:pt-0">
           {/* Logo */}
           <div
             className={`mb-10 transition-all duration-700 ${
