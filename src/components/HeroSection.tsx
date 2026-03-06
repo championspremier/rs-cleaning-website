@@ -92,14 +92,24 @@ const services = [
 const DURATION_MS = 2000;
 
 export default function HeroSection() {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [displayedValues, setDisplayedValues] = useState<number[]>([0, 0, 0]);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [sectionInView, setSectionInView] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(statsRef, { once: true, amount: 0.5 });
 
   useEffect(() => {
-    setIsLoaded(true);
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setSectionInView(true);
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -129,16 +139,16 @@ export default function HeroSection() {
   }, [isInView, hasAnimated]);
 
   return (
-      <section className="relative -mt-16 overflow-hidden bg-teal-tint">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(20,184,166,0.07)_0%,_transparent_70%)]" />
+    <section
+      ref={sectionRef}
+      className="relative -mt-16 overflow-hidden bg-teal-tint transition-opacity duration-[900ms] ease-in"
+      style={{ opacity: sectionInView ? 1 : 0 }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(20,184,166,0.07)_0%,_transparent_70%)]" />
 
-        <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pb-24 pt-0 sm:pb-32 sm:pt-0">
-          {/* Logo */}
-          <div
-            className={`mb-10 transition-all duration-700 ${
-              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-            }`}
-          >
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pb-24 pt-0 sm:pb-32 sm:pt-0">
+        {/* Logo */}
+        <div className="mb-10">
             <Image
               src="/dark-logo.png"
               alt="RS Cleaning logo"
@@ -149,34 +159,22 @@ export default function HeroSection() {
             />
           </div>
 
-          {/* Headline */}
-          <h1
-            className={`max-w-3xl text-center text-4xl font-bold leading-tight tracking-tight text-charcoal transition-all delay-100 duration-700 sm:text-5xl lg:text-6xl ${
-              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-            }`}
-          >
+        {/* Headline */}
+        <h1 className="max-w-3xl text-center text-4xl font-bold leading-tight tracking-tight text-charcoal sm:text-5xl lg:text-6xl">
             Spotless Buildings,{" "}
             <span className="bg-gradient-to-r from-cyan-accent to-teal-accent bg-clip-text text-transparent">
               Happy Companies
             </span>
-          </h1>
+        </h1>
 
-          {/* Subheadline */}
-          <p
-            className={`mt-6 max-w-lg text-center text-lg leading-relaxed text-gray-500 transition-all delay-200 duration-700 sm:text-xl ${
-              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-            }`}
-          >
+        {/* Subheadline */}
+        <p className="mt-6 max-w-lg text-center text-lg leading-relaxed text-gray-500 sm:text-xl">
             Trusted local cleaners delivering sparkling results&nbsp;&mdash;
             every time.
-          </p>
+        </p>
 
-          {/* CTA Buttons */}
-          <div
-            className={`mt-10 flex flex-col items-center gap-4 transition-all delay-300 duration-700 sm:flex-row ${
-              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-            }`}
-          >
+        {/* CTA Buttons */}
+        <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row">
             {/* Primary: Get A Quote */}
             <a
               href="/contact"
@@ -214,13 +212,11 @@ export default function HeroSection() {
             </a>
           </div>
 
-          {/* Stats */}
-          <div
-            ref={statsRef}
-            className={`mt-16 grid w-full max-w-2xl grid-cols-3 gap-4 transition-all delay-[400ms] duration-700 sm:mt-20 sm:gap-8 ${
-              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-            }`}
-          >
+        {/* Stats */}
+        <div
+          ref={statsRef}
+          className="mt-16 grid w-full max-w-2xl grid-cols-3 gap-4 sm:mt-20 sm:gap-8"
+        >
             {stats.map((stat, i) => (
               <div key={stat.label} className="flex flex-col items-center text-center">
                 <span className="bg-gradient-to-r from-cyan-accent to-teal-accent bg-clip-text text-3xl font-bold text-transparent sm:text-4xl lg:text-5xl">
@@ -233,13 +229,11 @@ export default function HeroSection() {
             ))}
           </div>
 
-          {/* Service Cards */}
-          <div
-            id="services"
-            className={`mt-16 grid w-full max-w-6xl gap-6 transition-all delay-500 duration-700 sm:mt-20 sm:grid-cols-2 lg:grid-cols-3 ${
-              isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-            }`}
-          >
+        {/* Service Cards */}
+        <div
+          id="services"
+          className="mt-16 grid w-full max-w-6xl gap-6 sm:mt-20 sm:grid-cols-2 lg:grid-cols-3"
+        >
             {services.map((s) => (
               <div
                 key={s.title}
@@ -278,8 +272,8 @@ export default function HeroSection() {
                 </a>
               </div>
             ))}
-          </div>
         </div>
-      </section>
+      </div>
+    </section>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 /* ------------------------------------------------------------------ */
@@ -69,28 +68,10 @@ function MarqueeRow({
 /* ------------------------------------------------------------------ */
 
 export default function LogoCloudBlock() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
-    }
-  }, [controls, isInView]);
-
   return (
-    <div ref={containerRef} className="space-y-10">
+    <div className="space-y-10">
       {/* Heading + CTA */}
-      <motion.div
-        initial="hidden"
-        animate={controls}
-        variants={{
-          hidden: { opacity: 0, y: 20 },
-          visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-        }}
-        className="mx-auto max-w-3xl px-6 text-center"
-      >
+      <div className="mx-auto max-w-3xl px-6 text-center">
         <h3 className="text-2xl font-bold text-white sm:text-3xl">
           Cleaning made easy
         </h3>
@@ -116,7 +97,7 @@ export default function LogoCloudBlock() {
             </svg>
           </a>
         </div>
-      </motion.div>
+      </div>
 
       {/* Logo carousel rows */}
       <div className="space-y-6">

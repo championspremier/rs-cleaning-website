@@ -34,7 +34,7 @@ export default function Navbar() {
             <li key={l.label}>
               <Link
                 href={l.href}
-                scroll={l.href === "/"}
+                scroll={true}
                 className="relative text-sm font-medium text-white transition-colors hover:text-cyan-accent after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:bg-cyan-accent after:transition-all after:duration-300 hover:after:w-full"
               >
                 {l.label}
@@ -133,7 +133,7 @@ export default function Navbar() {
               <li key={l.label}>
                 <Link
                   href={l.href}
-                  scroll={l.href === "/"}
+                  scroll={true}
                   onClick={() => setOpen(false)}
                   className="block rounded-lg px-3 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/5 hover:text-cyan-accent"
                 >

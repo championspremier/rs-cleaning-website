@@ -240,7 +240,8 @@ export default function ScrollCleanVideo() {
       <div
         ref={pinRef}
         suppressHydrationWarning
-        className="relative flex h-screen w-screen items-center justify-center overflow-hidden"
+        className="relative h-screen w-screen overflow-hidden"
+        style={{ width: "100vw", height: "100vh" }}
       >
         <div
           ref={contentRef}
