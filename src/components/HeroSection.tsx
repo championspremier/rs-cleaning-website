@@ -1,17 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { useInView } from "framer-motion";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
 /* ------------------------------------------------------------------ */
 
 const stats = [
-  { value: "10,000+", label: "Cleaning Days" },
-  { value: "20+", label: "Years in Business" },
-  { value: "99.9%", label: "Customer Satisfaction" },
+  { target: 10000, suffix: "+", label: "Cleaning Days" },
+  { target: 20, suffix: "+", label: "Years in Business" },
+  { target: 99.9, suffix: "%", label: "Customer Satisfaction" },
 ];
+
+function easeOutCubic(t: number): number {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function formatStatValue(value: number, suffix: string): string {
+  if (value >= 1000) {
+    return Math.round(value).toLocaleString() + suffix;
+  }
+  if (value % 1 !== 0) {
+    return value.toFixed(1) + suffix;
+  }
+  return Math.round(value).toString() + suffix;
+}
 
 const services = [
   {
@@ -74,12 +89,44 @@ const services = [
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+const DURATION_MS = 2000;
+
 export default function HeroSection() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [displayedValues, setDisplayedValues] = useState<number[]>([0, 0, 0]);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(statsRef, { once: true, amount: 0.3 });
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  useEffect(() => {
+    if (!isInView || hasAnimated) return;
+    setHasAnimated(true);
+
+    const startTime = performance.now();
+    const targets = stats.map((s) => s.target);
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / DURATION_MS, 1);
+      const eased = easeOutCubic(progress);
+
+      setDisplayedValues(
+        targets.map((target) => Math.round(target * eased * 100) / 100)
+      );
+
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        setDisplayedValues(targets);
+      }
+    };
+
+    requestAnimationFrame(tick);
+  }, [isInView, hasAnimated]);
 
   return (
       <section className="relative overflow-hidden bg-teal-tint">
@@ -93,7 +140,7 @@ export default function HeroSection() {
             }`}
           >
             <Image
-              src="/logo.png"
+              src="/dark-logo.png"
               alt="RS Cleaning logo"
               width={180}
               height={180}
@@ -108,9 +155,9 @@ export default function HeroSection() {
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
-            Spotless Homes,{" "}
+            Spotless Buildings,{" "}
             <span className="bg-gradient-to-r from-cyan-accent to-teal-accent bg-clip-text text-transparent">
-              Happy Families
+              Happy Companies
             </span>
           </h1>
 
@@ -132,7 +179,7 @@ export default function HeroSection() {
           >
             {/* Primary: Get A Quote */}
             <a
-              href="#contact"
+              href="/contact"
               className="group inline-flex items-center rounded-full bg-gradient-to-r from-cyan-accent to-teal-accent px-8 py-4 text-base font-bold text-white shadow-glow transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-lg sm:px-10 sm:py-4 sm:text-lg"
             >
               Get A Quote
@@ -169,14 +216,15 @@ export default function HeroSection() {
 
           {/* Stats */}
           <div
+            ref={statsRef}
             className={`mt-16 grid w-full max-w-2xl grid-cols-3 gap-4 transition-all delay-[400ms] duration-700 sm:mt-20 sm:gap-8 ${
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
           >
-            {stats.map((stat) => (
+            {stats.map((stat, i) => (
               <div key={stat.label} className="flex flex-col items-center text-center">
                 <span className="bg-gradient-to-r from-cyan-accent to-teal-accent bg-clip-text text-3xl font-bold text-transparent sm:text-4xl lg:text-5xl">
-                  {stat.value}
+                  {formatStatValue(displayedValues[i] ?? 0, stat.suffix)}
                 </span>
                 <span className="mt-1 text-xs font-medium text-gray-500 sm:text-sm">
                   {stat.label}
@@ -187,6 +235,7 @@ export default function HeroSection() {
 
           {/* Service Cards */}
           <div
+            id="services"
             className={`mt-16 grid w-full max-w-6xl gap-6 transition-all delay-500 duration-700 sm:mt-20 sm:grid-cols-2 lg:grid-cols-3 ${
               isLoaded ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
             }`}
@@ -209,7 +258,7 @@ export default function HeroSection() {
                 </p>
 
                 <a
-                  href="#contact"
+                  href="/contact"
                   className="inline-flex items-center text-sm font-medium text-cyan-accent transition-colors hover:text-teal-accent"
                 >
                   Get a Quote

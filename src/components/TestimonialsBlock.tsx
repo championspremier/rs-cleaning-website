@@ -13,7 +13,7 @@ interface Testimonial {
   company: string;
   rating: number;
   text: string;
-  accent: "blue" | "purple";
+  accent: "blue" | "purple" | "green";
 }
 
 export default function TestimonialsBlock() {
@@ -38,6 +38,15 @@ export default function TestimonialsBlock() {
       rating: 5,
       text: "As a group who manages a bunch of different buildings, we can honestly say RS Cleaning Services has made our life so much easier. They take care of multiple properties for us, and they always show up, do a great job, and pay attention to the little things that really matter. What really stands out, though, is Rosilene. She is reliable, easy to talk to, and always goes above and beyond without being asked. Whether it's regular cleanings, quick turnovers, or last-minute requests, she handles everything with care and pride. Our tenants notice it too. We get so many comments about how clean and well-kept the common areas are. Having someone we can trust across all our buildings gives us real peace of mind. We'd recommend RS Cleaning to anyone who wants a cleaning service that's consistent, trustworthy, and genuinely cares about doing things right.",
       accent: "purple",
+    },
+    {
+      id: 3,
+      name: "Jimmy",
+      role: "Manager",
+      company: "Row34",
+      rating: 5,
+      text: "I have been working with Rosilene from RS Cleaning Services going on 10 years now. Over that time, as we have added locations, I have found her pricing to be very competitive and her service to be above average. Rosilene is quick to address any request or concerns we might have and is always willing to take on extra projects we need completed outside of her regular cleaning scope.",
+      accent: "green",
     },
   ];
 
@@ -66,6 +75,7 @@ export default function TestimonialsBlock() {
     const colors = {
       blue: "bg-blue-950/40 border-blue-800 text-blue-400",
       purple: "bg-purple-950/40 border-purple-800 text-purple-400",
+      green: "bg-emerald-950/40 border-emerald-800 text-emerald-400",
     };
     return colors[accent];
   };
@@ -190,7 +200,9 @@ export default function TestimonialsBlock() {
                   isActive
                     ? testimonial.accent === "blue"
                       ? "bg-blue-500"
-                      : "bg-purple-500"
+                      : testimonial.accent === "purple"
+                        ? "bg-purple-500"
+                        : "bg-emerald-500"
                     : "bg-gray-700"
                 )}
                 aria-label={`Go to testimonial ${index + 1}`}

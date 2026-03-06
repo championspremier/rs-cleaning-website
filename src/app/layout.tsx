@@ -11,6 +11,8 @@ const geistSans = localFont({
 export const metadata: Metadata = {
   title: "RS Cleaning Service",
   description: "Professional cleaning services — coming soon.",
+  // Favicon: app/favicon.ico (32x32) + public/apple-touch-icon.png (180x180)
+  // Generated via: node scripts/generate-favicon.mjs
 };
 
 export default function RootLayout({

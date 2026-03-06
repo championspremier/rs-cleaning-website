@@ -97,7 +97,7 @@ export default function LogoCloudBlock() {
 
         <div className="mt-6">
           <a
-            href="#contact"
+            href="/contact"
             className="group inline-flex items-center rounded-full bg-gradient-to-r from-cyan-accent to-teal-accent px-6 py-3 text-sm font-bold text-white shadow-glow transition-all duration-300 hover:scale-[1.03] hover:shadow-glow-lg sm:text-base"
           >
             Get a Quote

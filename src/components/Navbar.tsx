@@ -4,10 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 
 const navLinks = [
-  { label: "Home", href: "#" },
-  { label: "About Us", href: "#about" },
-  { label: "FAQs", href: "#faqs" },
-  { label: "Contact Us", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "FAQs", href: "/faqs" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 export default function Navbar() {
@@ -17,11 +17,11 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-charcoal/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         {/* Logo */}
-        <a href="#" className="shrink-0">
+        <a href="/" className="shrink-0">
           <Image
-            src="/logo.png"
+            src="/full-light-logo.png"
             alt="RS Cleaning"
-            width={40}
+            width={140}
             height={40}
             className="h-10 w-auto"
           />
@@ -86,7 +86,7 @@ export default function Navbar() {
 
           {/* Get A Quote button */}
           <a
-            href="#contact"
+            href="/contact"
             className="rounded-full bg-gradient-to-r from-cyan-accent to-teal-accent px-4 py-2 text-xs font-bold text-white shadow-sm transition-all duration-300 hover:shadow-glow-sm sm:text-sm"
           >
             Get A Quote
