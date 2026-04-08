@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState, type FormEvent } from "react";
 
 /* ------------------------------------------------------------------ */
 /*  Service options (icon + label)                                     */
@@ -71,151 +70,155 @@ const serviceOptions = [
 /* ------------------------------------------------------------------ */
 
 export default function QuoteForm() {
-  const formRef = useRef<HTMLFormElement>(null);
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [company, setCompany] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [serviceInterested, setServiceInterested] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  function toggleService(label: string) {
-    setSelectedServices((prev) =>
-      prev.includes(label) ? prev.filter((s) => s !== label) : [...prev, label]
-    );
+  function resetForm() {
+    setFirstName("");
+    setLastName("");
+    setCompany("");
+    setEmail("");
+    setPhone("");
+    setServiceInterested("");
+    setAdditionalInfo("");
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
-    const payload = {
-      first_name: formData.get("firstName") as string,
-      last_name: formData.get("lastName") as string,
-      company_name: formData.get("company") as string,
-      email: formData.get("email") as string,
-      phone: formData.get("phone") as string,
-      services: selectedServices,
-      additional_info: formData.get("info") as string,
-    };
-
-    const { error: dbError } = await supabase
-      .from("quote_requests")
-      .insert([payload]);
-
-    setLoading(false);
-
-    if (dbError) {
-      setError(
-        "Something went wrong. Please call us at 617-212-8717."
-      );
+    if (!serviceInterested.trim()) {
+      setSubmitError("Please select a service.");
       return;
     }
 
-    setSubmitted(true);
-    setSelectedServices([]);
-    formRef.current?.reset();
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          company,
+          email,
+          phone,
+          serviceInterested,
+          additionalInfo,
+        }),
+      });
+
+      const data = (await res.json()) as {
+        success?: boolean;
+        error?: string;
+      };
+
+      if (!res.ok || !data.success) {
+        setSubmitError(
+          data.error || "Something went wrong. Please try again or call us."
+        );
+        return;
+      }
+
+      setSubmitSuccess(true);
+      resetForm();
+    } catch {
+      setSubmitError(
+        "Something went wrong. Please try again or call 617-212-8717."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  if (submitted) {
-    return (
-      <div className="flex flex-col items-center py-16 text-center">
-        <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-cyan-accent to-teal-accent">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2.5} className="h-8 w-8">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        </div>
-        <h3 className="text-2xl font-bold text-charcoal">Thank you!</h3>
-        <p className="mt-2 text-gray-600">We&apos;ll be in touch shortly.</p>
-      </div>
-    );
-  }
-
-  /* Shared input styles — light theme */
   const inputCls =
     "w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-charcoal placeholder-gray-400 outline-none transition-all focus:border-cyan-accent focus:ring-2 focus:ring-cyan-accent/20";
 
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className="mx-auto max-w-3xl space-y-6"
-    >
-      {/* Name row */}
+    <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <input
           type="text"
-          name="firstName"
+          value={firstName}
+          onChange={(ev) => setFirstName(ev.target.value)}
           placeholder="First Name *"
           required
           className={inputCls}
         />
         <input
           type="text"
-          name="lastName"
+          value={lastName}
+          onChange={(ev) => setLastName(ev.target.value)}
           placeholder="Last Name *"
           required
           className={inputCls}
         />
       </div>
 
-      {/* Company */}
       <input
         type="text"
-        name="company"
+        value={company}
+        onChange={(ev) => setCompany(ev.target.value)}
         placeholder="Company Name *"
         required
         className={inputCls}
       />
 
-      {/* Email + Phone */}
       <div className="grid gap-4 sm:grid-cols-2">
         <input
           type="email"
-          name="email"
+          value={email}
+          onChange={(ev) => setEmail(ev.target.value)}
           placeholder="Email *"
           required
           className={inputCls}
         />
         <input
           type="tel"
-          name="phone"
+          value={phone}
+          onChange={(ev) => setPhone(ev.target.value)}
           placeholder="Phone *"
           required
           className={inputCls}
         />
       </div>
 
-      {/* Service selection cards */}
       <div>
         <p className="mb-3 text-sm font-medium text-charcoal">
           Service Interested In *
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {serviceOptions.map((svc) => {
-            const active = selectedServices.includes(svc.label);
+            const selected = serviceInterested === svc.label;
             return (
               <button
                 key={svc.label}
                 type="button"
-                onClick={() => toggleService(svc.label)}
+                onClick={() => setServiceInterested(svc.label)}
                 className={`relative flex flex-col items-center gap-2 rounded-xl border-2 px-3 py-4 text-center transition-all duration-200 ${
-                  active
-                    ? "border-cyan-accent bg-cyan-accent/5 shadow-glow-sm"
+                  selected
+                    ? "border-cyan-accent bg-cyan-accent/10 shadow-glow-sm"
                     : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
               >
-                {/* Checkmark */}
-                {active && (
+                {selected && (
                   <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-cyan-accent to-teal-accent">
                     <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={3} className="h-3 w-3">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                   </span>
                 )}
-                <span className={active ? "text-cyan-accent" : "text-gray-400"}>
+                <span className={selected ? "text-cyan-accent" : "text-gray-400"}>
                   {svc.icon}
                 </span>
                 <span className="text-xs font-medium leading-tight text-charcoal">
@@ -227,30 +230,21 @@ export default function QuoteForm() {
         </div>
       </div>
 
-      {/* Additional info */}
       <textarea
-        name="info"
+        value={additionalInfo}
+        onChange={(ev) => setAdditionalInfo(ev.target.value)}
         rows={4}
-        placeholder="Additional Information *"
-        required
+        placeholder="Additional information (optional)"
         className={`${inputCls} resize-none`}
       />
 
-      {/* Error message */}
-      {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
-          {error}
-        </p>
-      )}
-
-      {/* Submit */}
       <div className="pt-2">
         <button
           type="submit"
-          disabled={loading}
+          disabled={isSubmitting}
           className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-cyan-accent to-teal-accent px-8 py-4 text-base font-bold text-white shadow-glow transition-all duration-300 hover:scale-[1.02] hover:shadow-glow-lg disabled:pointer-events-none disabled:opacity-70 sm:w-auto sm:text-lg"
         >
-          {loading ? (
+          {isSubmitting ? (
             <>
               <svg
                 className="mr-2 h-5 w-5 animate-spin"
@@ -278,6 +272,18 @@ export default function QuoteForm() {
           )}
         </button>
       </div>
+
+      {submitSuccess && (
+        <p className="rounded-lg bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+          Thanks! We&apos;ll get back to you shortly.
+        </p>
+      )}
+
+      {submitError && (
+        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          {submitError}
+        </p>
+      )}
     </form>
   );
 }

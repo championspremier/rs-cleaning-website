@@ -104,7 +104,7 @@ export default function HeroSection() {
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setSectionInView(true);
+        setSectionInView(entry.isIntersecting);
       },
       { threshold: 0.1 }
     );
